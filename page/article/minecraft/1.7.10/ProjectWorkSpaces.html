@@ -1,0 +1,95 @@
+<h1>Gradle workspace setup tutorial for 1.7.10</h1>
+<pre>
+In this article, we will be discussing about forge and its workspaces and how to set them up in a reasonable way.
+
+First part download a gradle compatible version of forge and extract it to a sub folder of your project folder.
+
+Inside that sub folder we will open build.gradle and look around line 31, looking down from here we will see:
+<div class="code">
+assetDir = "eclipse/assets"
+</div>
+
+Replace this with:
+<div  class="code">
+if (file('../run').exists()) {
+	assetDir = "../run/assets"
+} else {
+	assetDir = "eclipse/assets"
+}
+</div>
+
+You will then need to make three files and one folder in your project folder root, along side the forge folder:
+Make the folder called <b>run</b>.
+
+Create three batch files like so:
+1.<b>Gradlew_Build.bat</b>
+<div  class="code">
+@E:
+@cd %~dp0\forge-1.7.10-10.13.0.1180-src
+
+@setlocal
+@set JAVA_HOME=%ProgramFiles%\Java\jdk1.7.0_17
+@gradlew.bat build
+@rem @gradlew.bat eclipse
+@endlocal
+@pause
+</div>
+
+2.<b>Gradlew_Setup.bat</b>
+<div  class="code">
+@E:
+@cd %~dp0\forge-1.7.10-10.13.0.1180-src
+
+@setlocal
+@set JAVA_HOME=%ProgramFiles%\Java\jdk1.7.0_17
+@gradlew.bat setupDecompWorkspace
+@rem @gradlew.bat eclipse
+@endlocal
+@pause
+</div>
+
+3.<b>Gradlew_Setup_eclipse.bat</b>
+<div  class="code">
+@E:
+@cd %~dp0\forge-1.7.10-10.13.0.1180-src
+
+@setlocal
+@set JAVA_HOME=%ProgramFiles%\Java\jdk1.7.0_17
+@gradlew.bat eclipse
+@endlocal
+@pause
+</div>
+
+Lastly, create one folder called run
+
+Once done, you will only need to run Gradlew_Setup.bat once this will decompile minecraft and get it ready.
+
+Next we will get onto how we can tell gradle of each one of our projects.
+
+In the forge sub folder we will create a file called settings.gradle what can contain:
+<div class="code">
+includeFlat 'project1','project2'
+</div>
+
+You can replace project1 and project2 with the folder names you want your mods to be in.
+Next we run Gradlew_Build.bat and then Gradlew_Setup_eclipse.bat
+
+The results are that we will now have two more folders in our root, project1 and project2, were we can copy the src folder from our forge into(Making curtain to edit or remove the example mod).
+For each one of these folders we should create a build.gradle inside with the following:
+<div class="code">
+version = "internal"
+</div>
+That will allow us to control the version prefix in the resulting jar inside each projects build/libs
+
+Now when we run Gradle_Build.bat it will produce our projects, the main forge project will be made in the run folder, this is also were your development environments minecraft will store its self.
+
+So that leaves the last question, how do we get this into eclipse?
+
+Thankfully there is an answer to that:
+1.Run eclipse and point it to the run folder we have in our project root.
+2.Under our package explorer, right click and import our projects(use the project root as the root and it will show up, be careful not to include the forge folder, as this should already be there)
+3.Finally, either from the debug or run drop down select "Run configurations..." and goto the tab called Classpath.
+4.Add your mod project here, Via the add projects button, but be curtain to uncheck "Add exported entries of selected projects" and "Add required entries of selected projects" unless you want a mess.
+
+Now when you click the run or debug button, your projects will be loaded along side the forge stuff and when you run the build batch you will get a jar file containing just the content for that mod.
+</pre>

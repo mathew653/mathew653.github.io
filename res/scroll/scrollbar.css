@@ -1,0 +1,3 @@
+.myScrollbar_wrapper {overflow: hidden; height: 1000px; position: relative;}
+.scrollbar_wrapper   {background: rgb(128,128,128); width: 10px; height: 100%; float: right;}
+.scrollbar           {background: black; position: relative}

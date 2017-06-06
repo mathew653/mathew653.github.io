@@ -1,0 +1,87 @@
+<!--
+	Name : Project site
+	Revision : Baseline
+-->
+
+<html>
+	<head>
+		<title>Mat's projects</title>
+		
+		<link rel="stylesheet" type="text/css" href="res/theme.css" />
+		<!--<script type="text/javascript" src="res/_ContentScroller.js"></script>
+		<script type="text/javascript" src="res/_MouseScroller.js"></script>-->
+		<script type="text/javascript" src="res/FileHandler.js"></script>
+		<script type="text/javascript" src="res/PageHandler.js"></script>
+		<script type="text/javascript" src="res/CookieControll.js"></script>
+		
+		<!--<link rel="stylesheet" type="text/css" href="res/scroll/scrollbar.css" />-->
+		<!--Unused for now..-->
+		<!--<script type="text/javascript" src="res/XHR_Setup.js"></script>-->
+	</head>
+	<body id="MainPage">
+		<div class="align">
+			<img class="bg" src="bg.png"/>
+			<div class="menu">
+				<h1 class="black">Mat's projects</h1>
+			</div>
+			<div class="menulinks">
+				<!--<a href="?page=news" class="menubutton">News</a>-->
+				<a href="?page=blog&noscroll=1" class="menubutton">Blog</a>
+				<a href="?page=forum&noscroll=1" class="menubutton">Forum</a>
+				<a href="?page=files" class="menubutton">Files</a>
+				<a href="?page=articles" class="menubutton">Articles</a>
+			
+				<!--<a href="" onclick='readTextFileToElement("page/config.html","scrollrgn"); return false;' class="config"><img src="cog01.gif"/></a>-->
+			</div>
+			<div id="ContArea" class="ContentArea">
+				<!--<img style="visibility:hidden" alt="+scroll" src="au.png" id="ar1" class="alignRight"  onmousedown="javascript:StartScrollDN()" onmouseup="javascript:stopScrollDN()" onmouseout="javascript:stopScrollDN()" />
+				<img style="visibility:hidden" alt="-scroll" src="ad.png" id="ar2" class="alignRight2" onmousedown="javascript:StartScrollUP()" onmouseup="javascript:stopScrollUP()" onmouseout="javascript:stopScrollUP()" />-->
+				
+				<!-- Work around horizontal scroll bar issues with palemoon(25.5.0). -->
+				<div id="initrgn" class="ScrollInit">
+					<div id="scrollrgn" class="Scrollregion">
+							You will need javascript enabled to view this
+					</div>
+				</div>
+			</div>
+			<div class="ContentAreaBG"></div>
+		
+			<script type="text/javascript">
+				//var SiteString  = location.search;
+				var SiteString = location.search.substr(1);
+				var ContentArea = document.getElementById("scrollrgn");
+				
+				var MainPage = document.getElementById("MainPage");
+				if (getCookie("MT_BackgroundColor")=="")
+				{
+					MainPage.style.backgroundColor="rgb(0,128,255)";
+				}
+				else
+				{
+				}
+				//MainPage.style.backgroundColor="rgb(0,255,0)";
+			
+				//document.getElementById("ar1").style.visibility = "visible";
+				//document.getElementById("ar2").style.visibility = "visible";
+				ContentArea.style.overflow = "visible";
+			
+				SelectPageByQuery("scrollrgn");
+				//readTextFileToElement("page/news.html","scrollrgn");
+				//RegisterScroll();
+			</script>
+		
+			<!--<script type="text/javascript" src="res/scroll/mousescroll.js"></script>
+			<script type="text/javascript" src="res/scroll/scrollbar.js"></script>-->
+		
+			<!-- margin: 0px 2px 2px 0px; -->
+		
+			<!-- Fixup positioning for IE -->
+			<!--[if IE]>
+				<script type="text/javascript" src="res\IEHack.js"></script>
+				<script type="text/javascript">
+					CorrectAlignment();
+				</script>
+			<![endif]-->
+		</div>
+	</body>
+</html>

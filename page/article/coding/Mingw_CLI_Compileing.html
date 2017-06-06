@@ -1,0 +1,167 @@
+<pre>
+As of late, i had another case of compiler rage with dev c++, so i travelled down the route of doing the leg work for my self.
+
+I got the latest the mingW compiler suite from :
+<a href="http://sourceforge.net/projects/mingw/files/Installer/mingw-get-inst/">http://sourceforge.net/projects/mingw/files/Installer/mingw-get-inst/</a>
+
+To sum it up, its basicly the linux gcc compiler built to use for windows builds, meaning this tutorial with very little or no if any adjustments short of installing gcc instead of mingw and useing a bash script instead of a batch file can be used to compile code under linux and cygwin.
+
+For the sake of tutorial i will assume the default installation folder and won't go into depth about the program we are targeting just the makefile and execution script.
+
+Once we have installed the compiler, we should setup a batch file in our project file simular to :
+<textarea class="code"rows="20">
+@rem all changes local to batch
+@setlocal
+
+@set _BUILD_BIN=C:\MinGW\bin
+@set _TOOL_TOTAL=0
+
+@set PATH=%_BUILD_BIN%;%PATH%
+
+@if EXIST %_BUILD_BIN%\gcc.exe (
+	@echo [check]GCC Found.
+	@set /a _TOOL_TOTAL+=1
+)
+@if EXIST %_BUILD_BIN%\g++.exe (
+	@echo [check]G++ Found.
+	@set /a _TOOL_TOTAL+=1
+)
+@if EXIST %_BUILD_BIN%\mingw32-make.exe (
+	@echo [check]GNU make found.
+	@set /a _TOOL_TOTAL+=1
+)
+
+@if NOT EXIST .\objects @mkdir .\objects
+@if NOT EXIST .\output @mkdir .\output
+
+@if %_TOOL_TOTAL% EQU 3 (
+	@echo [check]Requirements met, building..
+	@echo -----------------------------------
+	@%_BUILD_BIN%\mingw32-make.exe --makefile=Win32Make.ini
+	@echo [cleanup]Cleaning up.
+	@%_BUILD_BIN%\mingw32-make.exe --makefile=Win32Make.ini clean
+	@echo -----------------------------------
+	@echo Completed operations.
+) else (
+	@echo [error]Requirements failed, should atleast have complete MingGW win32 tool chain
+)
+
+@set _BUILD_BIN=
+@set _TOOL_TOTAL=
+
+@rem changes can be global
+@endlocal
+
+@pause > NUL
+</textarea>
+
+All that does is setup our environment so that gcc knows where to find its self it will also check for our c and c++ compilers as well as our make program, i used setlocal to prevent it affecting the environment outside our batch, it also invokes our make program telling it to use Win32Make.ini as our makefile, all a makefile will do is tell make how we want to build our code and components.
+
+For the sake of simplicity, I am gonna put up a makefile i built up after some online studying(the linux eqivilant documentation should apply almost fully for make, gcc and g++).
+
+So lets make our Win32Make.ini and put this in there.
+<textarea class="code" rows="20">
+#By default we use the all segment.
+.DEFAULT_GOAL := all
+
+#Compiler setup
+
+#C
+CC = gcc
+
+#C++
+CXX = g++
+
+#Compiler flags
+
+#C
+CFLAGS = -c -Wall
+
+#C++
+CXXFLAGS =
+
+#C preprocessor flags
+CPPFLAGS = -IC:\MinGW\include
+
+#Linker flags
+_LINKFLAGS = -static-libgcc -static-libstdc++
+_LIBS = 
+
+_OBJECTS = main.o
+_OBJ_DIR = objects
+
+#Prefix our object folder to our object files(assuming they equate to .cpp files)
+_OBJ_LIST = $(patsubst %,$(_OBJ_DIR)\\%,$(_OBJECTS))
+
+_output_dir = output
+_output = HelloWorld.exe
+
+#Our all segment depends on the object list given above, so it will build from those.
+all: $(_OBJ_LIST)
+	@echo [link]Creating output : $(_output_dir)\$(_output)
+	@$(CXX) $(_OBJ_LIST) -o $(_output_dir)\$(_output) $(_LINKFLAGS) $(_LIBS)
+
+
+#Build statement for creating object code from our cpp files(g++ used here instead of gcc)
+$(_OBJ_DIR)\\%.o: %.cpp 
+	@echo [compile]compile : $&lt;
+	@$(CXX) $(CFLAGS) $&lt; -o $@
+
+#Build statement for creating object code from our c files(gcc used here instead of g++)
+$(_OBJ_DIR)\\%.o: %.c 
+	@echo [compile]compile : $&lt;
+	@$(CC) $(CFLAGS) $&lt; -o $@
+
+clean:
+	@echo [cleanup]Clean : Object directory
+	@del .\$(_OBJ_DIR)\*.o
+</textarea>
+
+Right now just whip up a simple hello world in c or c++ and put it in our main.cpp or main.c (.cpp if you are using c++ and .c for c).
+
+Now when we run the batch file it should make two folders, objects and output, objects will be empty(it is used to store our .o files what are cleaned up by the batch file) and output should contain our helloworld, under the name of HelloWorld.exe.
+
+Alright, so you want to add more files?
+
+you see this line in our makefile?
+<b>_OBJECTS = main.o</b>
+just append anything like
+<b>_OBJECTS = main.o foo.o</b>
+then as long as foo.cpp or foo.c exist we are good to go.
+
+Now to explain some of the witchcraft in the make file.
+
+looking at this segment
+<textarea class="code" rows="20">
+$(_OBJ_DIR)\\%.o: %.cpp
+	@echo [compile]compile : $&lt;
+	@$(CXX) $(CFLAGS) $< -o $@
+</textarea>
+
+Anyone familiar with linux variables will see that we are referencing the <b>_OBJ_DIR</b> variable but what does this other madness mean?
+To sum it up as best as I can, we are first saying that we should depend on a .cpp file that is in our current folder under the same name to create our object file in the objects folder.
+
+<b>$&lt;</b> indicates the name of the .cpp, it knows the list because of the <b>all</b> segment depending upon a list of .o files created in <b>_OBJ_LIST</b> from <b>_OBJECTS</b>
+<b>$@</b> indicates the name of our output .o file.
+
+so if we wanted to build all our .cplusplus files as object files in the objects folder, we can just add a statement like this
+<textarea class="code" rows="20">
+$(_OBJ_DIR)\\%.o: %.cplusplus
+	@echo [compile]compile : $&lt;
+	@$(CXX) $(CFLAGS) $&lt; -o $@
+</textarea>
+
+As with a batch file to stop our interpreter echoing our commands, we prefix them with the @ sign(as far as I know @echo off will not work in a makefile).
+
+Some notes to finish this off.
+
+#Some may see that I put the linker flags and library includes after the compile statement, this was done as I discovered that it fixed a linking issue when linking librarys.
+
+#Finally an extra note, if we want to link a library to our executable, say for example winsock2(ws2_32.dll), we can do the following:
+find the line 
+<b>_LIBS =</b>
+and change it to
+<b>_LIBS = -lws2_32</b>
+This will include our library, for other librarys we can use the same approach as long as we remember when we are specifying our libs gcc will look for formatted library names like..
+if we take our above statement, we are not linking against ws2_32.a if we look in our mingw/lib folder, instead we are actually linking against libws2_32.a because gcc prefixed our parameter with lib and suffixed it with .a to my understanding it will find .a files if they are not prefixed with lib but I am uncertain, I felt it was important to note this potential gotcha when linking librarys.
+</pre>
