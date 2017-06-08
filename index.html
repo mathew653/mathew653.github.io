@@ -25,9 +25,9 @@
 				<h1 class="black">Mat's projects</h1>
 			</div>
 			<div class="menulinks">
-				<!--<a href="?page=news" class="menubutton">News</a>-->
+				<a href="?page=news" class="menubutton">News</a>
 				<a href="?page=blog&noscroll=1" class="menubutton">Blog</a>
-				<a href="?page=forum&noscroll=1" class="menubutton">Forum</a>
+				<!--<a href="?page=forum&noscroll=1" class="menubutton">Forum</a>-->
 				<a href="?page=files" class="menubutton">Files</a>
 				<a href="?page=articles" class="menubutton">Articles</a>
 			
@@ -65,6 +65,7 @@
 				//document.getElementById("ar2").style.visibility = "visible";
 				ContentArea.style.overflow = "visible";
 			
+				SetDefaultPage("page/news.html");
 				SelectPageByQuery("scrollrgn");
 				//readTextFileToElement("page/news.html","scrollrgn");
 				//RegisterScroll();

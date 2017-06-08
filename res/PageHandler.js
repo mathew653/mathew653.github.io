@@ -9,6 +9,12 @@ function getQueryVariable(variable)
        return(false);
 }
 
+var DefaultURL="about:blank";
+function SetDefaultPage(page)
+{
+	DefaultURL=page;
+}
+
 function SelectPageByQuery(elem)
 {
 	var _p_Query=getQueryVariable("page");
@@ -26,7 +32,7 @@ function SelectPageByQuery(elem)
 	}
 	else
 	{
-		readTextFileToElement("page/blog.html",elem);
+		readTextFileToElement(DefaultURL,elem);
 		_NoScroll=true;
 	}
 	
