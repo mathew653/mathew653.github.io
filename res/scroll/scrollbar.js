@@ -12,8 +12,7 @@ var myScrollbar = (function() {
     
     //create wrapper and wrap around content
     _config.wrapper = document.createElement("div");
-    _config.wrapper = _config.content.parentElement.insertBefore( _config.wrapper, 
-                                                                  _config.content);
+    _config.wrapper = _config.content.parentElement.insertBefore( _config.wrapper, _config.content);
     _config.wrapper.appendChild(_config.content);
     _config.wrapper.style.height = _config.content.offsetHeight + "px";
     _config.wrapper.style.width  = (_config.content.offsetWidth + 10) + "px";

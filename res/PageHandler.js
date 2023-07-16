@@ -25,11 +25,7 @@ function SelectPageByQuery(elem)
 	if ((typeof _p_Scroll) !== 'boolean') { _NoScroll=true; }
 	
 	if (_ParamGood === true)
-	{
-		readTextFileToElement("page/"+_p_Query+".html",elem);
-		//if (readTextFileToElement("page/"+_p_Query+".html",elem) === true) { }
-		//else { readTextFileToElement("page/main.html",elem); }
-	}
+	{	readTextFileToElement("page/"+_p_Query+".html",elem);	}
 	else
 	{
 		readTextFileToElement(DefaultURL,elem);

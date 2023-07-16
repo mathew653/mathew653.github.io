@@ -9,14 +9,9 @@ function readTextFileToElement(file,elem)
 	//IE as per usal is a difficult sod.
 	try
 	{
-		if (window.ActiveXObject)
-		{
-			rawFile= new window.ActiveXObject("Microsoft.XMLHTTP");
-		}
+		if (window.ActiveXObject) {	rawFile= new window.ActiveXObject("Microsoft.XMLHTTP"); }
 		else
-		{
-			rawFile = new XMLHttpRequest();
-		}
+		{ rawFile = new XMLHttpRequest(); }
 				
 		rawFile.open("GET", file, false);
 		rawFile.onreadystatechange = function ()
